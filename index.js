@@ -10,7 +10,7 @@ const corsHeader = {
   name: 'Access-Control-Allow-Origin',
   value: process.env.PORT ? 'https://color-golf.netlify.app' : 'http://localhost:8080',
 };
-fastify.get('/', async (request, reply) => {
+fastify.get('/', (request, reply) => {
   reply.header(corsHeader.name, corsHeader.value);
   reply.send(`Hi! This is the url for the poetry reader api. Access the app here: ${corsHeader.value}`);
 });
@@ -18,7 +18,7 @@ fastify.get('/', async (request, reply) => {
 const start = async () => {
   const port = process.env.PORT || 3000;
   try {
-    await fastify.listen(port);
+    await fastify.listen(port, '0.0.0.0');
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
