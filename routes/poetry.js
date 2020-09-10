@@ -33,10 +33,11 @@ async function routes(fastify, options) {
   fastify.get(baseRouteUrl + '/title/:titleName/author/:authorName', async (request, reply) => {
     reply.header(corsHeader.name, corsHeader.value);
     const authorName = request.params.authorName;
-    const titleName = request.params.titleName;
+    let titleName = request.params.titleName;
+    titleName = trimToCharLimit(titleName);
 
     try {
-      const axiosRes = await axios.get(`https://poetrydb.org/title/${titleName}:abs`);
+      const axiosRes = await axios.get(`https://poetrydb.org/title/${titleName}`);
       // if multiple authors used the same title the poetry DB returns all poems so we must filter the author
       const poemsData = axiosRes.data.filter(poem => {
         return poem.author === authorName;
@@ -49,5 +50,11 @@ async function routes(fastify, options) {
   });
 
 };
+
+function trimToCharLimit(string) {
+  const maxLength = 50;
+  if (string.length > maxLength) return string.substring(0, maxLength);
+  return string;
+}
 
 module.exports = routes;
